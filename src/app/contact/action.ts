@@ -69,10 +69,9 @@ export async function sendContactForm(
     });
 
     if (error) {
-      console.error("Resend error:", error);
       return {
         success: false,
-        message: `Erreur Resend: ${error.message}`,
+        message: "Une erreur est survenue. Veuillez réessayer ou nous appeler directement.",
       };
     }
 
@@ -80,11 +79,10 @@ export async function sendContactForm(
       success: true,
       message: "Votre message a bien été envoyé ! Nous vous recontactons sous 24h.",
     };
-  } catch (err) {
-    console.error("Catch error:", err);
+  } catch {
     return {
       success: false,
-      message: `Erreur serveur: ${err instanceof Error ? err.message : String(err)}`,
+      message: "Une erreur est survenue. Veuillez réessayer ou nous appeler directement.",
     };
   }
 }
