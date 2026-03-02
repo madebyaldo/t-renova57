@@ -24,8 +24,8 @@ function SubmitButton({
   siteKey: string;
 }) {
   const { pending } = useFormStatus();
-  const waitingRecaptcha = siteKey && !recaptchaReady;
-  const disabled = pending || waitingRecaptcha;
+  const waitingRecaptcha: boolean = !!siteKey && !recaptchaReady;
+  const disabled: boolean = pending || waitingRecaptcha;
   return (
     <button
       type="submit"
