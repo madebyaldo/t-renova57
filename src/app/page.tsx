@@ -66,7 +66,7 @@ export default function Accueil() {
               <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                 <span className="text-xs font-semibold text-accent-light">
-                  Carrelage &amp; Rénovation — Moselle
+                  Carrelage &amp; Rénovation — De A à Z
                 </span>
               </div>
               <h1 className="mt-7 font-heading text-3xl font-bold leading-[1.12] text-white sm:text-4xl lg:text-[2.75rem] xl:text-5xl">
@@ -423,9 +423,7 @@ export default function Accueil() {
       </section>
 
       {/* ─── RÉALISATIONS ─── */}
-      <section
-        className="relative overflow-hidden bg-dark py-20 sm:py-28"
-      >
+      <section className="relative overflow-hidden bg-dark py-20 sm:py-28">
         {/* Decorative glows */}
         <div className="absolute inset-0 opacity-15" aria-hidden="true">
           <div className="absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-accent blur-[120px]" />
@@ -490,7 +488,11 @@ export default function Accueil() {
                     alt={project.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes={i === 0 ? "(max-width: 640px) 100vw, 66vw" : "(max-width: 640px) 100vw, 33vw"}
+                    sizes={
+                      i === 0
+                        ? "(max-width: 640px) 100vw, 66vw"
+                        : "(max-width: 640px) 100vw, 33vw"
+                    }
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -658,14 +660,16 @@ export default function Accueil() {
           <div className="text-center">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <span className="text-xs font-semibold text-accent">Nos engagements</span>
+              <span className="text-xs font-semibold text-accent">
+                Nos engagements
+              </span>
             </div>
             <h2 className="mx-auto max-w-3xl font-heading text-3xl font-bold leading-tight text-noir sm:text-4xl lg:text-5xl">
               Créons ensemble votre prochain projet.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-warm-text">
-              Votre satisfaction est notre priorité. Nous vous accompagnons
-              de la première idée jusqu&apos;à la dernière finition.
+              Votre satisfaction est notre priorité. Nous vous accompagnons de
+              la première idée jusqu&apos;à la dernière finition.
             </p>
           </div>
 
@@ -679,8 +683,18 @@ export default function Accueil() {
               "Devis gratuit",
             ].map((item) => (
               <div key={item} className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 text-accent" aria-hidden="true">
-                  <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-5 w-5 text-accent"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <span className="text-sm font-medium text-noir">{item}</span>
               </div>
