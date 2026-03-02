@@ -1,0 +1,146 @@
+"use client";
+
+import { useFormState, useFormStatus } from "react-dom";
+import { sendContactForm, type ContactFormState } from "@/app/contact/action";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full rounded-full bg-accent px-6 py-3.5 font-heading text-sm font-semibold text-dark transition-colors hover:bg-accent-hover disabled:opacity-60"
+    >
+      {pending ? "Envoi en cours..." : "Envoyer la demande"}
+    </button>
+  );
+}
+
+export default function ContactForm() {
+  const [state, formAction] = useFormState<ContactFormState, FormData>(
+    sendContactForm,
+    null
+  );
+
+  if (state?.success) {
+    return (
+      <div className="rounded-2xl border border-accent/30 bg-accent/5 p-10 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 text-accent" aria-hidden="true">
+            <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h3 className="mt-4 font-heading text-xl font-bold text-noir">
+          Message envoyé !
+        </h3>
+        <p className="mt-2 text-sm text-warm-text">{state.message}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-warm-border bg-white p-8 shadow-sm sm:p-10">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-dark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+            <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+          </svg>
+        </div>
+        <div>
+          <h2 className="font-heading text-xl font-bold text-noir">
+            Demande de devis gratuit
+          </h2>
+          <p className="text-sm text-warm-muted">
+            Remplissez le formulaire, nous vous recontactons sous 24h.
+          </p>
+        </div>
+      </div>
+
+      {state?.success === false && (
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {state.message}
+        </div>
+      )}
+
+      <form action={formAction} className="mt-8 space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-noir">
+              Nom complet
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+              placeholder="Jean Dupont"
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-noir">
+              Téléphone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              required
+              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+              placeholder="06 12 34 56 78"
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-noir">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+            placeholder="jean@exemple.fr"
+          />
+        </div>
+        <div>
+          <label htmlFor="service" className="block text-sm font-medium text-noir">
+            Type de projet
+          </label>
+          <select
+            id="service"
+            name="service"
+            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir focus:border-accent focus:ring-0 focus:outline-none"
+            defaultValue=""
+          >
+            <option value="" disabled>Sélectionnez un service</option>
+            <option>Carrelage intérieur</option>
+            <option>Carrelage extérieur &amp; terrasse</option>
+            <option>Rénovation salle de bain</option>
+            <option>Étanchéité &amp; balcon</option>
+            <option>Revêtement sols &amp; murs</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium text-noir">
+            Décrivez votre projet
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows={5}
+            required
+            className="mt-2 block w-full resize-none rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+            placeholder="Décrivez votre projet : pièce concernée, surface, type de carrelage souhaité..."
+          />
+        </div>
+        <SubmitButton />
+        <p className="text-center text-xs text-warm-muted">
+          Devis 100% gratuit — Sans engagement
+        </p>
+      </form>
+    </div>
+  );
+}
