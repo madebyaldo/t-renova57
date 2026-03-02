@@ -12,9 +12,7 @@ export default function Contact() {
   return (
     <>
       {/* Hero */}
-      <section
-        className="relative overflow-hidden bg-dark pb-16 pt-28 sm:pb-24 sm:pt-36"
-      >
+      <section className="relative overflow-hidden bg-dark pb-16 pt-28 sm:pb-24 sm:pt-36">
         <div className="absolute inset-0 opacity-15" aria-hidden="true">
           <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-accent blur-[120px]" />
           <div className="absolute -bottom-32 right-1/4 h-80 w-80 rounded-full bg-accent blur-[100px]" />
@@ -169,7 +167,7 @@ export default function Contact() {
                   {[
                     "Devis détaillé et transparent",
                     "Artisan qualifié avec 10+ ans d'expérience",
-                    "Matériaux de premier choix",
+                    "Matériaux haut de gamme",
                     "Respect des délais et du budget",
                     "Chantier propre et soigné",
                   ].map((item) => (
