@@ -73,7 +73,7 @@ export default function ContactForm() {
               id="name"
               name="name"
               required
-              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-base text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none sm:text-sm"
               placeholder="Jean Dupont"
             />
           </div>
@@ -86,7 +86,7 @@ export default function ContactForm() {
               id="phone"
               name="phone"
               required
-              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+              className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-base text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none sm:text-sm"
               placeholder="06 12 34 56 78"
             />
           </div>
@@ -100,7 +100,7 @@ export default function ContactForm() {
             id="email"
             name="email"
             required
-            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-base text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none sm:text-sm"
             placeholder="jean@exemple.fr"
           />
         </div>
@@ -111,7 +111,7 @@ export default function ContactForm() {
           <select
             id="service"
             name="service"
-            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir focus:border-accent focus:ring-0 focus:outline-none"
+            className="mt-2 block w-full rounded-xl border border-warm-border bg-light px-4 py-3 text-base text-noir focus:border-accent focus:ring-0 focus:outline-none sm:text-sm"
             defaultValue=""
           >
             <option value="" disabled>Sélectionnez un service</option>
@@ -132,7 +132,7 @@ export default function ContactForm() {
             name="message"
             rows={5}
             required
-            className="mt-2 block w-full resize-none rounded-xl border border-warm-border bg-light px-4 py-3 text-sm text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none"
+            className="mt-2 block w-full resize-none rounded-xl border border-warm-border bg-light px-4 py-3 text-base text-noir placeholder:text-warm-muted focus:border-accent focus:ring-0 focus:outline-none sm:text-sm"
             placeholder="Décrivez votre projet : pièce concernée, surface, type de carrelage souhaité..."
           />
         </div>
