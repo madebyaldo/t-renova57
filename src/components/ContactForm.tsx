@@ -1,17 +1,42 @@
 "use client";
 
+import Script from "next/script";
+import { useCallback, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { sendContactForm, type ContactFormState } from "@/app/contact/action";
 
-function SubmitButton() {
+const RECAPTCHA_ACTION = "contact_form";
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
+      execute: (siteKey: string, opts: { action: string }) => Promise<string>;
+    };
+  }
+}
+
+function SubmitButton({
+  recaptchaReady,
+  siteKey,
+}: {
+  recaptchaReady: boolean;
+  siteKey: string;
+}) {
   const { pending } = useFormStatus();
+  const waitingRecaptcha = siteKey && !recaptchaReady;
+  const disabled = pending || waitingRecaptcha;
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={disabled}
       className="w-full rounded-full bg-accent px-6 py-3.5 font-heading text-sm font-semibold text-dark transition-colors hover:bg-accent-hover disabled:opacity-60"
     >
-      {pending ? "Envoi en cours..." : "Envoyer la demande"}
+      {pending
+        ? "Envoi en cours..."
+        : waitingRecaptcha
+          ? "Chargement..."
+          : "Envoyer la demande"}
     </button>
   );
 }
@@ -21,6 +46,38 @@ export default function ContactForm() {
     sendContactForm,
     null
   );
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+
+      if (siteKey && recaptchaReady && window.grecaptcha) {
+        try {
+          const token = await window.grecaptcha.execute(siteKey, {
+            action: RECAPTCHA_ACTION,
+          });
+          formData.set("recaptcha_token", token);
+        } catch {
+          formAction(formData);
+          return;
+        }
+      }
+
+      formAction(formData);
+    },
+    [formAction, siteKey, recaptchaReady]
+  );
+  const handleRecaptchaLoad = useCallback(() => {
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(() => setRecaptchaReady(true));
+    } else {
+      setRecaptchaReady(true);
+    }
+  }, []);
 
   if (state?.success) {
     return (
@@ -62,7 +119,14 @@ export default function ContactForm() {
         </div>
       )}
 
-      <form action={formAction} className="mt-8 space-y-5">
+      {siteKey && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
+          strategy="lazyOnload"
+          onLoad={handleRecaptchaLoad}
+        />
+      )}
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-noir">
@@ -136,7 +200,10 @@ export default function ContactForm() {
             placeholder="Décrivez votre projet : pièce concernée, surface, type de carrelage souhaité..."
           />
         </div>
-        <SubmitButton />
+        <SubmitButton
+          recaptchaReady={!siteKey || recaptchaReady}
+          siteKey={siteKey}
+        />
         <p className="text-center text-xs text-warm-muted">
           Devis 100% gratuit — Sans engagement
         </p>

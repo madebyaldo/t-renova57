@@ -4,15 +4,48 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+const RECAPTCHA_MIN_SCORE = 0.5;
+
 export type ContactFormState = {
   success: boolean;
   message: string;
 } | null;
 
+async function verifyRecaptcha(token: string | null): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret) return true; // skip in dev if not configured
+  if (!token) return false;
+
+  const res = await fetch(RECAPTCHA_VERIFY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      secret,
+      response: token,
+    }),
+  });
+  const data = (await res.json()) as {
+    success?: boolean;
+    score?: number;
+    action?: string;
+  };
+  return Boolean(data.success && (data.score ?? 0) >= RECAPTCHA_MIN_SCORE);
+}
+
 export async function sendContactForm(
   _prev: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
+  const recaptchaToken = formData.get("recaptcha_token") as string | null;
+  const valid = await verifyRecaptcha(recaptchaToken);
+  if (!valid) {
+    return {
+      success: false,
+      message: "Vérification de sécurité échouée. Veuillez réessayer.",
+    };
+  }
+
   const name = formData.get("name") as string;
   const phone = formData.get("phone") as string;
   const email = formData.get("email") as string;
