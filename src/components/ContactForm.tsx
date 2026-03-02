@@ -1,11 +1,12 @@
 "use client";
 
 import Script from "next/script";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { sendContactForm, type ContactFormState } from "@/app/contact/action";
 
 const RECAPTCHA_ACTION = "contact_form";
+const RECAPTCHA_INPUT_NAME = "recaptcha_token";
 
 declare global {
   interface Window {
@@ -48,26 +49,40 @@ export default function ContactForm() {
   );
   const [recaptchaReady, setRecaptchaReady] = useState(false);
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+  const submitWithTokenRef = useRef(false);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
       const form = e.currentTarget;
-      const formData = new FormData(form);
+
+      if (submitWithTokenRef.current) {
+        submitWithTokenRef.current = false;
+        return;
+      }
 
       if (siteKey && recaptchaReady && window.grecaptcha) {
+        e.preventDefault();
         try {
           const token = await window.grecaptcha.execute(siteKey, {
             action: RECAPTCHA_ACTION,
           });
-          formData.set("recaptcha_token", token);
+          let input = form.querySelector<HTMLInputElement>(
+            `input[name="${RECAPTCHA_INPUT_NAME}"]`
+          );
+          if (!input) {
+            input = document.createElement("input");
+            input.type = "hidden";
+            input.name = RECAPTCHA_INPUT_NAME;
+            form.appendChild(input);
+          }
+          input.value = token;
+          submitWithTokenRef.current = true;
+          form.requestSubmit();
         } catch {
-          formAction(formData);
-          return;
+          formAction(new FormData(form));
         }
+        return;
       }
-
-      formAction(formData);
     },
     [formAction, siteKey, recaptchaReady]
   );
@@ -79,7 +94,15 @@ export default function ContactForm() {
     }
   }, []);
 
-  if (state?.success) {
+  const safeState =
+    state &&
+    typeof state === "object" &&
+    "success" in state &&
+    "message" in state
+      ? state
+      : null;
+
+  if (safeState?.success) {
     return (
       <div className="rounded-2xl border border-accent/30 bg-accent/5 p-10 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15">
@@ -90,7 +113,7 @@ export default function ContactForm() {
         <h3 className="mt-4 font-heading text-xl font-bold text-noir">
           Message envoyé !
         </h3>
-        <p className="mt-2 text-sm text-warm-text">{state.message}</p>
+        <p className="mt-2 text-sm text-warm-text">{String(safeState.message)}</p>
       </div>
     );
   }
@@ -113,9 +136,9 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {state?.success === false && (
+      {safeState?.success === false && (
         <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {state.message}
+          {String(safeState.message)}
         </div>
       )}
 
@@ -126,7 +149,7 @@ export default function ContactForm() {
           onLoad={handleRecaptchaLoad}
         />
       )}
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form action={formAction} onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-noir">
